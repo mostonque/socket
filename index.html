@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web Socket</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+    <script>
+        $(() => {
+            //  burdaki io nesnesi yukardaki socket.io.js dosyasından geliyor connect metoduyla
+            // web socketimize bağlanabiliyoruz.web socketimiz neredeyse onun linkini yazıyoruz
+            const socket = io.connect('http://localhost:3000/');
+
+
+
+
+            socket.on('merhaba de', (data) => {
+                $('#merhaba').html('Merhaba'+' '+data.name);
+            });
+
+            socket.emit('isim',{isim:'serhat'});
+
+            socket.on('soyad',(data)=>{
+                $('#merhaba').html('Soyadı'+' '+data.soyadi);
+            });
+
+            $('#selam').on('click', (data) => {
+                socket.emit('selam ver',{name:'serhat'})
+            });
+        });
+    </script>
+</head>
+<body>
+
+<button id="selam">Selam ver</button>
+
+<div id="merhaba"></div>
+
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        const socket = io.connect('http://localhost:3000/');
+    </script>
+    <script>
+        $(() => {
+
+            setTimeout(() => {
+                socket.emit('selam ver');
+            }, 2000);
+
+            socket.on('karsıla', () => {
+                $('#karsıla').html('HOŞGELDİNİZ');
+            });
+
+            //burda inputa girilen yazıyı alıyoruz sonra broadcast js dosyasına geçiyoruz
+            $('button').on('click', () => {
+                $('.users').html('<li>bağlandınız</li>');
+                socket.emit('new-user', {adi: $('#ad').val(), soyadi: $('#soyad').val()});
+            });
+
+            // burda user adıyla gelen broadcast.emit datasını kullanıcılara gösteriyoruz
+            socket.on('user', (data) => {
+                $('.users').html('<li>' + '<b>' + data.adi + ' ' + data.soyadi + '</b>' + ' Bağlandı!' + '</li>');
+            });
+        });
+    </script>
+</head>
+<body>
+<p id="karsıla"></p>
+<input id="ad"/>
+<input id="soyad"/>
+<button>Bağlan</button>
+
+<ul class="users">
+
+</ul>
+
+</body>
+</html>
