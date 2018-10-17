@@ -3,22 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>room test</title>
+    <style>
+        #leaveRoom {
+            display: none;
+        }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
-        $(()=>{
-            const socket=io.connect('http://localhost:3000/');
-            $('#joinRoom').on('click',()=>{
-                socket.emit('joinRoom',{name:$('#roomName').val()});
+        $(() => {
+            const socket = io.connect('http://localhost:3000/');
+
+            $('#joinRoom').on('click', () => {
+                socket.emit('joinRoom', {name: $('#roomName').val()});
             });
-           socket.on('new join',(data)=>{
-               $('#userCount').html(`bu odada<b> ${data.count} </b> kişi bulunuyor`);
-           });
-            socket.on('me',(data)=>{
-               val= $('#me').html(data.name+' Odasına Bağlandınız');
-               setTimeout(()=>{
-                    val.remove($("#me").fadeOut("slow"));
-                },2000)
+
+            $('#leaveRoom').on('click', () => {
+                socket.emit('leaveRoom', {name: $('#roomName').val()})
+            });
+
+            socket.on('leavedRoom', (data) => {
+                $('#userCount').html(`bu odada<b> ${data.count} </b> kişi bulunuyor`);
+
+            });
+            socket.on('leaveMsg', (data) => {
+                $('#me').html(data.name + ' Odasından Ayrıldınız');
+                $('#roomName,#joinRoom').removeAttr('disabled');
+                $('#leaveRoom').hide();
+                $('#userCount').empty();
+            });
+
+            socket.on('new join', (data) => {
+                $('#userCount').html(`bu odada<b> ${data.count} </b> kişi bulunuyor`);
+            });
+
+            socket.on('me', (data) => {
+                $('#me').html(data.name + ' Odasına Bağlandınız');
+                $('#roomName,#joinRoom').attr('disabled', 'disabled');
+                $('#leaveRoom').show();
             });
         });
     </script>
@@ -27,7 +49,8 @@
 
 <input id="roomName"/>
 <button id="joinRoom">join</button>
-<label id="me"></label>
+<button id="leaveRoom">Leave</button>
+<p id="me"></p>
 <div id="userCount"></div>
 
 </body>
